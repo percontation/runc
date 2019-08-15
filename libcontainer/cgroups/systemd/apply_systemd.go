@@ -475,6 +475,22 @@ func (m *Manager) Freeze(state configs.FreezerState) error {
 	return nil
 }
 
+func (m *Manager) ThawAll() error {
+	err := m.Freeze(configs.Thawed)
+	if err != nil {
+		return err
+	}
+	path, err := getSubsystemPath(m.Cgroups, "freezer")
+	if err != nil {
+		return err
+	}
+	freezer, err := subsystems.Get("freezer")
+	if err != nil {
+		return err
+	}
+	return freezer.(*fs.FreezerGroup).RecursiveThaw(path)
+}
+
 func (m *Manager) GetPids() ([]int, error) {
 	path, err := getSubsystemPath(m.Cgroups, "devices")
 	if err != nil {
