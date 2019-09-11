@@ -26,13 +26,9 @@ func (s *FreezerGroup) Apply(d *cgroupData) error {
 	return nil
 }
 
-func (s *FreezerGroup) Set(path string, cgroup *configs.Cgroup) error {
-	return set(path, cgroup.Resources.Freezer)
-}
-
 func (s *FreezerGroup) RecursiveThaw(path string) error {
 	return cgroups.WalkCgroups(path, func(dir string) error {
-		return set(dir, configs.Thawed)
+		return s.set(dir, configs.Thawed)
 	})
 }
 
@@ -44,7 +40,11 @@ func (s *FreezerGroup) GetStats(path string, stats *cgroups.Stats) error {
 	return nil
 }
 
-func set(path string, state configs.FreezerState) error {
+func (s *FreezerGroup) Set(path string, cgroup *configs.Cgroup) error {
+	return s.set(path, cgroup.Resources.Freezer)
+}
+
+func (s *FreezerGroup) set(path string, state configs.FreezerState) error {
 	switch state {
 	case configs.Frozen, configs.Thawed:
 		for {

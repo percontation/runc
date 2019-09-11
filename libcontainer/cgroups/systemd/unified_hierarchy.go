@@ -47,7 +47,7 @@ func (m *UnifiedManager) ThawAll() error {
 	if err != nil {
 		return err
 	}
-	return freezer.(*fs.FreezerGroup).RecursiveThaw(path)
+	return freezer.(*fs.FreezerGroupV2).RecursiveThaw(path)
 }
 
 func (m *UnifiedManager) Apply(pid int) error {
